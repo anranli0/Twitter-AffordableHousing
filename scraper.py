@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from datetime import date, timedelta, datetime
 import json
+import csv
 
 def get_num(str):
     return int(re.search(r'\d+', str).group(0))
@@ -80,7 +81,10 @@ def scrape(start_date, end_date, ndowns=20, hashtag='affordablehousing'):
             
             tweets = driver.find_elements(by=By.CSS_SELECTOR, value='[data-testid="tweet"]')
             for tweet in tweets:
-                tweetid, single = single_tweet(tweet)
+                try:
+                    tweetid, single = single_tweet(tweet)
+                except:
+                    continue
                 if tweetid in t: 
                     # count += 1
                     continue
@@ -89,13 +93,10 @@ def scrape(start_date, end_date, ndowns=20, hashtag='affordablehousing'):
         driver.close()
         driver.quit()
     
-    # print(f"{count} duplicates")
-    data = dict(list(t.items()))
-    print(len(data.keys()))
-    
-    outname = f"{str(start_date)}to{str(end_date)}.json"
-    with open(outname, "w") as outfile:
-        json.dump(data, outfile)
-
-    # return data
+    outname = './data/2.csv'
+    data = list(t.values()) 
+    headers = list(data[0].keys())
+    with open(outname,'w',newline='') as data_file:
+        writer = csv.DictWriter(data_file,fieldnames=headers)
+        writer.writerows(data)
 
