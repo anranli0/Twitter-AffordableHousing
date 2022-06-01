@@ -55,8 +55,65 @@ Search on twitter the hashtag [#affordablehousing](https://twitter.com/search?q=
 |4     |[hous, afford, unit, multifamili, develop, haigroup, home, stori, construct, via]|
 ```
 
-## Applying pre-trained pipelines
+## Named Entity Recognition (NER) with Bert Embeddings
 
+### Top names
+```
++-------------------+-----+
+|name               |count|
++-------------------+-----+
+|Biden              |18   |
+|Dave Chappelle     |13   |
+|Doug Ford          |11   |
+|Matt Kurzmann      |9    |
+|Chappelle          |7    |
+|Andrew Mikula      |7    |
+|Eric Salongo Kalisa|7    |
+|MacKenzie Scott    |5    |
+|Jeremiah Jarmin    |5    |
+|Anthony Buonicore  |5    |
+|Seth Barnett       |5    |
+|Alex Melikan       |4    |
+|Chrystal Kornegay  |4    |
+|Ford               |4    |
+|Neil Rosenthal     |4    |
+|Cruz III           |4    |
+|Katie Goar         |4    |
+|Emilio Dorcely     |4    |
+|Marcia Fudge       |4    |
+|John B             |4    |
++-------------------+-----+
+```
+### Top locations
+
+```
++-------------+-----+
+|location     |count|
++-------------+-----+
+|America      |88   |
+|U.S          |73   |
+|California   |61   |
+|Bamboo       |60   |
+|Crypto       |60   |
+|Ontario      |56   |
+|US           |52   |
+|Canada       |49   |
+|Florida      |42   |
+|Toronto      |29   |
+|NYC          |29   |
+|CA           |24   |
+|Vancouver    |23   |
+|LA           |22   |
+|Colorado     |20   |
+|NY           |20   |
+|MA           |20   |
+|BC           |18   |
+|San Francisco|17   |
+|Charlotte    |17   |
++-------------+-----+
+```
+
+## Applying pre-trained pipelines
 ### Emotion
 ```
 +---------+-----+
@@ -83,12 +140,15 @@ It’s bad when people choose death because they can’t AFFORD life.
 
 Example of surprise
 ```
-Look at all those signatures! Big thanks to everyone across our coalition and beyond who came through to sign our petition and help us gather signatures!
+Look at all those signatures! Big thanks to everyone across our coalition and beyond who 
+came through to sign our petition and help us gather signatures!
 ```
 
 Example of sadness
 ```
-I just have no words. HB1601/HB978 was returned to the house with  #GovLee signature making #homelessness a felony by closing encampments. Not enough shelter beds & not enough #affordablehousing 
+I just have no words. HB1601/HB978 was returned to the house with  
+#GovLee signature making #homelessness a felony by closing encampments. 
+Not enough shelter beds & not enough #affordablehousing 
 ```
 
 ### Sarcasm
@@ -119,5 +179,5 @@ https://github.com/shaikhsajid1111/twitter-scraper-selenium
 https://spark.apache.org/docs/latest/sql-data-sources-csv.html
 https://medium.com/trustyou-engineering/topic-modelling-with-pyspark-and-spark-nlp-a99d063f1a6e
 https://medium.com/@lily_su/accessing-s3-bucket-from-google-colab-16f7ee6c5b51
-
+https://nlp.johnsnowlabs.com/demo
 
