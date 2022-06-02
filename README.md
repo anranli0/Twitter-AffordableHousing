@@ -5,17 +5,48 @@
 
 According to the U.S. Department of Housing and Urban Development, Affordable Housing is generally defined as housing on which the occupant is paying no more than 30 percent of gross income for housing costs, including utilities.
 
+The U.S. has a shortage of 7 million rental homes affordable and available to extremely low-income renters, whose household incomes are at or below the poverty guideline or 30% of their area median income. Only 36 affordable and available rental homes exist for every 100 extremely low-income renter households.
+
+In this project, I hope to answer the following questions:
+
+What aspects of affordable housing do people care about?
+
+How do people feel about it?
+
+Where is the discussion happening and who are involved?
+
+
+## Data Collection
+
 Search on twitter the hashtag [#affordablehousing](https://twitter.com/search?q=%23affordablehousing&src=typed_query&f=live) and we will likely find the following: successful housing projects and campaigns, advertisement for houses for sale or for rent, complaints on expensive housing prices, and appeals for more affordable housing initiatives.
 
-## Scrapping
+I scrapped twitter data under the hashtag #affordablehousing posted between the beginning of Feburary and the end of May this year. For scrapping, I used the package selenium that  opens a chrome driver and allows me to scroll down the page while scrapping, which cannot be achieved through beautifulsoup. 
+
+I did try to parallelize the scrapping process but unfortunately the action of openning up a web driver cannot be executed within a lambda function. I ended up scrapping data locally, storing it in csv files and uploaded them to an S3 bucket.
+
+This serial scrapping creates a bottleneck for the project and will not scale well if a larger amount of data is needed.
 
 ## Visualization
+
+After reading the data with spark, I performed aggregation on some of the metadata scrapped alongside the text and visualized the results.
+
+Below are distributions of the number of posts per number of reply, like and retweet. We can see that most of these posts don't receive much attention online. 
+
+<img src="./imgs/reply_dist.png" width="300"/>
+<img src="./imgs/likes_dist.png" width="300"/>
+<img src="./imgs/retweet_dist.png" width="300"/>
+
+Below is the distribution of time of day when the tweets are posted. It may be exaggerated because the way I scrapped the data made it more likely for tweets posted later in the day to be collected.
+
+<img src="./imgs/hour_dist.png" width="300"/>
 
 
 ## Spark NLP
 
+To dissect the tweet body itself, I used a conventional tokenizing pipeline in spark NLP, which includes a tokenizer, a normalizer, a lemmatizer, a stopwords cleaner and a stemmer.
+This process tokenizes a string, removes unwanted characters, convert each word to its root form and removes stopwords.
 
-### top 20 words
+The top 20 most frequent words are:
 
 ```
 +-----------+-----+
@@ -44,7 +75,13 @@ Search on twitter the hashtag [#affordablehousing](https://twitter.com/search?q=
 +-----------+-----+
 ```
 
-## Topics
+Some of the noticeable words other than affordable housing are develop, build, help, city, homeless, support and rent.
+
+## Topic Modelling
+
+Once the text is tokenized, I vectorized it and applied a LDA model that can identify a predefined number of topics in given data.
+
+Below are the top 10 words in each topic when we train the model on 4 topics.
 
 ```
 |topic | topic_words  
@@ -55,7 +92,22 @@ Search on twitter the hashtag [#affordablehousing](https://twitter.com/search?q=
 |4     |[hous, afford, unit, multifamili, develop, haigroup, home, stori, construct, via]|
 ```
 
+Topic 0 could be about new home owners. Topic 1 could be about increased rent in the cities. Topic 2 might be about the relationship between affordable housing and homelessness.
+
 ## Named Entity Recognition (NER) with Bert Embeddings
+
+To find the most relevant names and locations, I applied a pretrained pipeline with BertEmbeddings annotator for identifying named entity, which gives each segment of text a tag.
+
+For example:
+```
++--------------------------+------+
+|King County               |LOC   |
+|Parks & Rec Leslie Knope  |ORG   |
+|Elizabeth Esposito        |PER   |
++--------------------------+------+
+```
+
+By aggregating the result of the above tagging process, we can find the most frequently mentioned names and locations.
 
 ### Top names
 ```
@@ -84,6 +136,10 @@ Search on twitter the hashtag [#affordablehousing](https://twitter.com/search?q=
 |John B             |4    |
 +-------------------+-----+
 ```
+The name occurances are surprisingly sparse. Even the president only received 18 mentions in the text.
+
+A possible explanation could be that some of the relevant personnel are referred to by their job titles instead of their full names.
+
 ### Top locations
 
 ```
@@ -112,9 +168,18 @@ Search on twitter the hashtag [#affordablehousing](https://twitter.com/search?q=
 |Charlotte    |17   |
 +-------------+-----+
 ```
+The most occuring locations are at a nation / state level. Some Canadian provinces also appear the list.
+Overall the housing discussion seems to be most relevant in CA, MA, NY, FL in the US, and in BC and ON in Canada.
 
-## Applying pre-trained pipelines
-### Emotion
+## Read between the lines
+
+To investigate the emotions behind the tweets, I applied a pretrained Emotion Detection Classifier as well as a Sarcasm Classifier on the twitter data.
+
+### Emotion 
+
+According to the Emotion Detection Classifier, more than half of tweets in this dataset express a joyful sentiment. A significant portion of the tweets express fear. Relatively few tweets express surprise or sadness.
+
+
 ```
 +---------+-----+
 |sentiment|count|
@@ -125,6 +190,8 @@ Search on twitter the hashtag [#affordablehousing](https://twitter.com/search?q=
 |  sadness|  379|
 +---------+-----+
 ```
+
+I queried some sample text for each emotion and would mostly agree with the classification results. Please see some examples of each emotion below.
 
 Example of joy
 ```
@@ -151,7 +218,9 @@ I just have no words. HB1601/HB978 was returned to the house with
 Not enough shelter beds & not enough #affordablehousing 
 ```
 
-### Sarcasm
+## Sarcasm
+
+The sarcasm classifier identifies a small portion of sarcastic tweets, which is to be expected. However, I would not consider most of the tweets classified as sarcasm to be even remotely sarcastic.
 
 ```
 +---------+-----+
@@ -173,11 +242,26 @@ Examples of sarcastic text:
 Today, I proudly introduced my bill: Affordable Housing And Area Median Income Fairness Act of 2022
 ```
 
+## Conclusion
+
+To answer the questions proposed in the beginning of this project:
+
+People care about **new homes**, **rent** and **homelessness** when they talk about affordabale housing.
+
+Most data expressed joy. However, there is a significant portion of the data that shows fear and worry.
+
+The most relevant locations are **Massachusetts**, **New York**, **California**, **Florida**, **Vancouver**, and **Ontario**. The most relevant personnel are: one US president, one standup comedian, and one Canadian politician.
+
 ## References
 https://www.hud.gov/
+
 https://github.com/shaikhsajid1111/twitter-scraper-selenium
+
 https://spark.apache.org/docs/latest/sql-data-sources-csv.html
+
 https://medium.com/trustyou-engineering/topic-modelling-with-pyspark-and-spark-nlp-a99d063f1a6e
+
 https://medium.com/@lily_su/accessing-s3-bucket-from-google-colab-16f7ee6c5b51
+
 https://nlp.johnsnowlabs.com/demo
 

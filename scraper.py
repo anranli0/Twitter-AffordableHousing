@@ -10,9 +10,15 @@ import json
 import csv
 
 def get_num(str):
+    '''
+    Get numeric value from string
+    '''
     return int(re.search(r'\d+', str).group(0))
 
 def get_date_range(start, end):
+    '''
+    Get all dates between start and end dates
+    '''
     days = []
     delta = end - start
     for i in range(delta.days + 1):
@@ -21,7 +27,10 @@ def get_date_range(start, end):
     return days
 
 def single_tweet(tweet):
-
+    '''
+    Scrape a single tweet post.
+    Return a tuple of id, dictionary containing post info
+    '''
     info = tweet.find_element(by=By.CSS_SELECTOR, value="a.r-bcqeeo.r-3s2u2q.r-qvutc0")
     info_lst = info.get_attribute("href").split("/")
     username = info_lst[3]
@@ -64,9 +73,16 @@ def single_tweet(tweet):
     return tweetid, single
 
 def scrape(start_date, end_date, ndowns=20, hashtag='affordablehousing'):
+    '''
+    Scrape twitter data day by day between start and end dates.
+    For each date/page, scroll down ndowns number of times, 
+    and collect unique posts.
+    Write scrapped data to a csv file where each row represents a tweet.
+    '''
     # count = 0
     days = get_date_range(start_date, end_date)
     t = {}
+    # scrape one day at a time
     for since, until in zip(days[:-1], days[1:]):
         url = f'https://mobile.twitter.com/search?f=live&q=(%23{hashtag})%20until%3A{until}%20since%3A{since}%20-filter%3Areplies&src=typed_query'
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
