@@ -26,6 +26,8 @@ I did try to parallelize the scrapping process but unfortunately the action of o
 
 This serial scrapping creates a bottleneck for the project and will not scale well if a larger amount of data is needed.
 
+Please find code in [scraper.py](https://github.com/lsc4ss-s22/final-project-waffles/blob/main/scraper.py)
+
 ## Visualization
 
 After reading the data with spark, I performed aggregation on some of the metadata scrapped alongside the text and visualized the results.
@@ -40,6 +42,7 @@ Below is the distribution of time of day when the tweets are posted. It may be e
 
 <img src="./imgs/hour_dist.png" width="300"/>
 
+Please find code in [visualization.ipynb](https://github.com/lsc4ss-s22/final-project-waffles/blob/main/visualization.ipynb)
 
 ## Spark NLP
 
@@ -93,6 +96,8 @@ Below are the top 10 words in each topic when we train the model on 4 topics.
 ```
 
 Topic 0 could be about new home owners. Topic 1 could be about increased rent in the cities. Topic 2 might be about the relationship between affordable housing and homelessness.
+
+Please find code in [tokens.ipynb](https://github.com/lsc4ss-s22/final-project-waffles/blob/main/tokens.ipynb)
 
 ## Named Entity Recognition (NER) with Bert Embeddings
 
@@ -171,6 +176,8 @@ A possible explanation could be that some of the relevant personnel are referred
 The most occuring locations are at a nation / state level. Some Canadian provinces also appear the list.
 Overall the housing discussion seems to be most relevant in CA, MA, NY, FL in the US, and in BC and ON in Canada.
 
+Please find code in [ner.ipynb](https://github.com/lsc4ss-s22/final-project-waffles/blob/main/ner.ipynb)
+
 ## Read between the lines
 
 To investigate the emotions behind the tweets, I applied a pretrained Emotion Detection Classifier as well as a Sarcasm Classifier on the twitter data.
@@ -241,6 +248,8 @@ Examples of sarcastic text:
 
 Today, I proudly introduced my bill: Affordable Housing And Area Median Income Fairness Act of 2022
 ```
+
+Please find code in [sentiment.ipynb](https://github.com/lsc4ss-s22/final-project-waffles/blob/main/sentiment.ipynb)
 
 ## Conclusion
 
