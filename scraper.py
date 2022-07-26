@@ -1,3 +1,7 @@
+'''
+Reference: https://github.com/shaikhsajid1111/twitter-scraper-selenium
+'''
+
 import time
 import re
 from selenium import webdriver
@@ -109,7 +113,7 @@ def scrape(start_date, end_date, ndowns=20, hashtag='affordablehousing'):
         driver.close()
         driver.quit()
     
-    outname = './data/2.csv'
+    outname = './twitter_data.csv'
     data = list(t.values()) 
     headers = list(data[0].keys())
     with open(outname,'w',newline='') as data_file:
